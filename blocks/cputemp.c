@@ -24,19 +24,3 @@ cputempu(char *str, int sigval)
         else
                 snprintf(str, BLOCKLENGTH, ICON1 "%d°C", temp / 1000);
 }
-
-void
-cputempc(int button)
-{
-        switch (button) {
-                case 1:
-                        TERMCMD("/usr/bin/htop -s PERCENT_CPU");
-                        break;
-                case 2:
-                        TERMCMD("/usr/bin/htop");
-                        break;
-                case 3:
-                        TERMCMD("/usr/bin/htop -s PERCENT_MEM");
-                        break;
-        }
-}

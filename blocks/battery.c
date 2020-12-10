@@ -28,11 +28,11 @@
 #define BATP                            40 /* plug in level */
 #define BATU                            80 /* unplug level */
 
-#define BATCAPFILE                      "/sys/class/power_supply/BAT0/capacity"
+#define BATCAPFILE                      "/sys/class/power_supply/BAT1/capacity"
 #define ACSTATEFILE                     "/sys/class/power_supply/AC/online"
-#define BATCFULLFILE                    "/sys/class/power_supply/BAT0/charge_full"
-#define BATCNOWFILE                     "/sys/class/power_supply/BAT0/charge_now"
-#define BATRATEFILE                     "/sys/class/power_supply/BAT0/current_now"
+#define BATCFULLFILE                    "/sys/class/power_supply/BAT1/charge_full"
+#define BATCNOWFILE                     "/sys/class/power_supply/BAT1/charge_now"
+#define BATRATEFILE                     "/sys/class/power_supply/BAT1/current_now"
 
 #define CNOTIFY(t, msg)                (char *[]){ "/usr/bin/notify-send", \
                                                    "-h", "string:x-canonical-private-synchronous:batmon", \
@@ -63,79 +63,11 @@ enum { Normal, Critical, Low, Plug, Unplug };
 void
 batteryu(char *str, int ac)
 {
-        static int level = Normal;
-        static char *icons[] = { ICON0, ICON1, ICON2, ICON3, ICON4,
-                                 ICON5, ICON6, ICON7, ICON8, ICON9 };
         int bat;
-
         if (!readint(BATCAPFILE, &bat)) {
-                strcpy(str, ICONa);
                 return;
         }
-        /* routine update */
-        if (ac == NILL) {
-                if (!readint(ACSTATEFILE, &ac)) {
-                        snprintf(str, BLOCKLENGTH, ICONe "%d%%", bat);
-                        return;
-                }
-                if (ac) {
-                        if (bat < BATU)
-                                level = Normal;
-                        else {
-                                if (level != Unplug) {
-                                        UNNOTIFY("0", "Unplug the charger");
-                                        level = Unplug;
-                                }
-                        }
-                        snprintf(str, BLOCKLENGTH, PUP "%s%d%%", ICON(bat), bat);
-                } else {
-                        if (bat > BATP)
-                                level = Normal;
-                        else if (bat > BATL) {
-                                if (level != Plug) {
-                                        UNNOTIFY("0", "Plug in the charger");
-                                        level = Plug;
-                                }
-                        } else if (bat > BATC) {
-                                if (level != Low) {
-                                        UNNOTIFY("0", "Battery level is low!");
-                                        level = Low;
-                                }
-                        } else {
-                                if (level != Critical) {
-                                        UCNOTIFY("0", "Battery level is critical!");
-                                        level = Critical;
-                                }
-                        }
-                        snprintf(str, BLOCKLENGTH, PDN "%s%d%%", ICON(bat), bat);
-                }
-        /* charger plugged in */
-        } else if (ac) {
-                if (bat < BATU) {
-                        UTNOTIFY("1000", "Charger plugged in");
-                        level = Normal;
-                } else {
-                        UNNOTIFY("0", "Unplug the charger");
-                        level = Unplug;
-                }
-                snprintf(str, BLOCKLENGTH, PUP "%s%d%%", ICON(bat), bat);
-        /* charger plugged out */
-        } else {
-                if (bat > BATP) {
-                        UTNOTIFY("1000", "Charger plugged out");
-                        level = Normal;
-                } else if (bat > BATL) {
-                        UNNOTIFY("0", "Plug in the charger");
-                        level = Plug;
-                } else if (bat > BATC) {
-                        UNNOTIFY("0", "Battery level is low!");
-                        level = Low;
-                } else {
-                        UCNOTIFY("0", "Battery level is critical!");
-                        level = Critical;
-                }
-                snprintf(str, BLOCKLENGTH, PDN "%s%d%%", ICON(bat), bat);
-        }
+        snprintf(str, BLOCKLENGTH, "BAT: %d%%", bat);
 }
 
 void

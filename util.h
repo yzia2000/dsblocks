@@ -8,8 +8,6 @@
 #define COL5                            "" /* mail block - syncing */
 
 #define LENGTH(X)                       (sizeof X / sizeof X[0])
-#define SCRIPT(name)                    "/home/ashish/.scripts/"name
-#define TERMCMD(cmd)                    cspawn((char *[]){ "/usr/bin/termite", "-e", cmd, NULL })
 
 void cspawn(char *const *arg);
 void csigself(int sig, int sigval);

@@ -2,10 +2,12 @@
 PREFIX := ${HOME}/.local
 
 CC := gcc
-CFLAGS := -O3 -Wall -Wextra
+CFLAGS := -O3 -Wall -Wextra -DALSA
 
 X11CFLAGS := $(shell pkg-config --cflags x11)
 X11LIBS := $(shell pkg-config --libs x11)
+
+LDFLAGS  = -L$(X11LIB) -s -lasound
 
 BLOCKS := $(wildcard blocks/*.c)
 
@@ -21,7 +23,7 @@ blocks/%.o: blocks/%.c blocks/%.h util.h shared.h
 	${CC} -o $@ -c ${CFLAGS} -Wno-unused-parameter $<
 
 dsblocks: dsblocks.o util.o ${BLOCKS:c=o}
-	${CC} -o $@ $^ ${X11LIBS}
+	${CC} -o $@ $^ ${X11LIBS} ${LDFLAGS} ${CFLAGS}
 
 sigdsblocks/sigdsblocks: sigdsblocks/sigdsblocks.c
 	${CC} -o $@ ${CFLAGS} $<

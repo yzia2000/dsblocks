@@ -1,8 +1,6 @@
 #include "blocks/battery.h"
 #include "blocks/cputemp.h"
 #include "blocks/calendar.h"
-#include "blocks/hotspot.h"
-#include "blocks/mail.h"
 #include "blocks/volume.h"
 
 /* If interval of a block is set to 0, the block will only be updated once at startup.
@@ -20,21 +18,18 @@
 #define INTERVALn                       0
 
 static Block blocks[] = {
-/*      funcu                   funcc                   interval        signal */
-        { hotspotu,             hotspotc,               -1,             4 },
+        /*      funcu                   funcc                   interval        signal */
 
-        { calendaru,            calendarc,              1,              1 },
+        { volumeu,              NULL,                0,              2 },
 
-        { mailu,                mailc,                  300,            3 },
+        { batteryu,             NULL,               10,             5 },
 
-        { volumeu,              volumec,                0,              2 },
+        { calendaru,            NULL,              1,              1 },
 
-        { cputempu,             cputempc,               2,              6 },
-
-        { batteryu,             batteryc,               10,             5 },
+        //{ cputempu,             cputempc,               2,              6 },
 
         { NULL } /* just to mark the end of the array */
 };
 
 /* default delimiter string */
-#define DELIMITER                       "   "
+#define DELIMITER                       " | "

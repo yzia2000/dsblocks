@@ -3,9 +3,9 @@
 #include "../util.h"
 #include "volume.h"
 
-#define PAVUCONTROL                     (char *[]){ "pavucontrol", NULL }
+#define PAVUCONTROL                     (char *[]){ "/usr/bin/pavucontrol", NULL }
 #define DEVNAME                         "default"
-#define MIXNAME                         "MASTER"
+#define MIXNAME                         "Master"
 
 	void
 volumeu(char *str, int sigval)
@@ -41,13 +41,15 @@ volumeu(char *str, int sigval)
 	if ((err = snd_mixer_selem_get_playback_volume_range(elem, &min, &max))) {
 		goto cleanup;
 	}
+	if ((err = snd_mixer_selem_get_playback_volume(elem, SND_MIXER_SCHN_MONO, &volume))) {
+	}
 
 cleanup:
 	snd_mixer_free(mixer);
 	snd_mixer_detach(mixer, DEVNAME);
 	snd_mixer_close(mixer);
 
-	snprintf(str, BLOCKLENGTH, "VOL: %.0f", (volume-min)*100./(max-min));
+	snprintf(str, BLOCKLENGTH, "VOL: %.0f%%", (volume-min)*100./(max-min));
 }
 
 	void

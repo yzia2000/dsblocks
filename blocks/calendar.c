@@ -5,19 +5,11 @@
 
 #define ICON                    COL1 "" COL0
 
-#define TOGGLECALCURSE          (char *[]){ SCRIPT("sigdwm"), "scrt i 4", NULL }
-
 void
 calendaru(char *str, int sigval)
 {
         time_t t = time(NULL);
         struct tm tm = *localtime(&t);
 
-        strftime(str, BLOCKLENGTH, ICON "%a, %b %d, %R", &tm);
-}
-
-void
-calendarc(int button)
-{
-        cspawn(TOGGLECALCURSE);
+        strftime(str, BLOCKLENGTH, "%d/%m/%Y %I:%M %p", &tm);
 }
