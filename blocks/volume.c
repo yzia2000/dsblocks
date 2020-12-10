@@ -1,41 +1,61 @@
 #include <stdio.h>
-
+#include <alsa/asoundlib.h>
 #include "../util.h"
 #include "volume.h"
 
-#define ICONhm                          COL2 "" COL0
-#define ICONhn                          COL1 "" COL0
-#define ICONsm                          COL2 "" COL0
-#define ICONsn                          COL1 "" COL0
+#define PAVUCONTROL                     (char *[]){ "pavucontrol", NULL }
+#define DEVNAME                         "default"
+#define MIXNAME                         "MASTER"
 
-#define PULSEINFO                       (char *[]){ SCRIPT("pulse_info.sh"), NULL }
-
-#define PAVUCONTROL                     (char *[]){ "/usr/bin/pavucontrol-qt", NULL }
-#define SETDEFAULTVOL                   (char *[]){ "/usr/bin/pactl", "set-sink-volume", "@DEFAULT_SINK@", "50%", NULL }
-#define TOGGLEMUTE                      (char *[]){ "/usr/bin/pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle", NULL }
-
-void
+	void
 volumeu(char *str, int sigval)
 {
-        static char *icons[] = { ICONsn, ICONsm, ICONhn, ICONhm };
-        char buf[15];
+	snd_mixer_t *mixer = NULL;
+	snd_mixer_selem_id_t *mixid = NULL;
+	snd_mixer_elem_t *elem = NULL;
+	long min = 0, max = 0, volume = -1;
+	int err;
 
-        buf[getcmdout(PULSEINFO, buf, sizeof buf - 1)] = '\0';
-        snprintf(str, BLOCKLENGTH, "%s%s", icons[buf[0] - '0'], buf + 1);
+	if ((err = snd_mixer_open(&mixer, 0))) {
+		return;
+	}
+	if ((err = snd_mixer_attach(mixer, DEVNAME))) {
+		goto cleanup;
+	}
+	if ((err = snd_mixer_selem_register(mixer, NULL, NULL))) {
+		goto cleanup;
+	}
+	if ((err = snd_mixer_load(mixer))) {
+		goto cleanup;
+	}
+
+	snd_mixer_selem_id_alloca(&mixid);
+	snd_mixer_selem_id_set_name(mixid, MIXNAME);
+	snd_mixer_selem_id_set_index(mixid, 0);
+
+	elem = snd_mixer_find_selem(mixer, mixid);
+	if (!elem) {
+		goto cleanup;
+	}
+
+	if ((err = snd_mixer_selem_get_playback_volume_range(elem, &min, &max))) {
+		goto cleanup;
+	}
+
+cleanup:
+	snd_mixer_free(mixer);
+	snd_mixer_detach(mixer, DEVNAME);
+	snd_mixer_close(mixer);
+
+	snprintf(str, BLOCKLENGTH, "VOL: %.0f", (volume-min)*100./(max-min));
 }
 
-void
+	void
 volumec(int button)
 {
-        switch(button) {
-                case 1:
-                        cspawn(TOGGLEMUTE);
-                        break;
-                case 2:
-                        cspawn(SETDEFAULTVOL);
-                        break;
-                case 3:
-                        cspawn(PAVUCONTROL);
-                        break;
-        }
+	switch(button) {
+		case 1:
+			cspawn(PAVUCONTROL);
+			break;
+	}
 }
