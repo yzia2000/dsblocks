@@ -2,6 +2,8 @@
 #include "blocks/cputemp.h"
 #include "blocks/calendar.h"
 #include "blocks/volume.h"
+#include "blocks/cpu.h"
+#include "blocks/ram.h"
 
 /* If interval of a block is set to 0, the block will only be updated once at startup.
  * If interval is set to a negative value, the block will never be updated in the main loop.
@@ -20,13 +22,15 @@
 static Block blocks[] = {
         /*      funcu                   funcc                   interval        signal */
 
-        { volumeu,              NULL,                0,              2 },
+        { volumeu,                      volumec,                0,              2 },
 
-        { batteryu,             NULL,               10,             5 },
+        { batteryu,                     NULL,                   0,              5 },
 
-        { calendaru,            NULL,              1,              1 },
+        { ramu,                         cpuc,                   1,              6 },
 
-        //{ cputempu,             cputempc,               2,              6 },
+        { cpuu,                         cpuc,                   1,              3 },
+
+        { calendaru,                    NULL,                   1,              1 },
 
         { NULL } /* just to mark the end of the array */
 };

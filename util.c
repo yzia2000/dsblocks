@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdarg.h>
 
 #include "util.h"
 
-void
+        void
 cspawn(char *const *arg)
 {
         setsid();
@@ -14,7 +15,7 @@ cspawn(char *const *arg)
         _exit(127);
 }
 
-void
+        void
 csigself(int sig, int sigval)
 {
         union sigval sv;
@@ -28,7 +29,7 @@ csigself(int sig, int sigval)
 }
 
 /* getcmdout doesn't null terminate */
-ssize_t
+        ssize_t
 getcmdout(char *const *arg, char *cmdout, size_t cmdoutlen)
 {
         int fd[2];
@@ -81,7 +82,7 @@ readint(const char *path, int *var) {
         return 1;
 }
 
-void
+        void
 uspawn(char *const *arg)
 {
         switch (fork()) {
@@ -95,4 +96,22 @@ uspawn(char *const *arg)
                         perror("uspawn - child - execv");
                         _exit(127);
         }
+}
+
+        int
+pscanf(const char *path, const char *fmt, ...)
+{
+        FILE *fp;
+        va_list ap;
+        int n;
+
+        if (!(fp = fopen(path, "r"))) {
+                return -1;
+        }
+        va_start(ap, fmt);
+        n = vfscanf(fp, fmt, ap);
+        va_end(ap);
+        fclose(fp);
+
+        return (n == EOF) ? -1 : n;
 }

@@ -243,6 +243,7 @@ update1:
                         d = delim;
                         while (*d != '\0')
                                 *(s++) = *(d++);
+                        *(s++) = '\n'; /* to mark the end of delimiter */
                         /* skip over empty blocks */
                 } else {
                         *block->prvtext = *block->curtext;

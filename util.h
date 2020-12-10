@@ -14,3 +14,4 @@ void csigself(int sig, int sigval);
 ssize_t getcmdout(char *const *arg, char *cmdout, size_t cmdoutlen);
 int readint(const char *path, int *var);
 void uspawn(char *const *arg);
+int pscanf(const char *path, const char *fmt, ...);
