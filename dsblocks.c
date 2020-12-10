@@ -42,7 +42,7 @@ static char *delim;
 static size_t delimlength;
 static sigset_t blocksigmask;
 
-void
+        void
 buttonhandler(int sig, siginfo_t *info, void *ucontext)
 {
         sig = info->si_value.sival_int >> 8;
@@ -59,7 +59,7 @@ buttonhandler(int sig, siginfo_t *info, void *ucontext)
                         }
 }
 
-void
+        void
 cleanup()
 {
         unlink(LOCKFILE);
@@ -67,16 +67,17 @@ cleanup()
         XCloseDisplay(dpy);
 }
 
-void
+        void
 setroot()
 {
         if (updatestatus()) {
                 XStoreName(dpy, DefaultRootWindow(dpy), statustext);
                 XSync(dpy, False);
+                printf("%s", statustext);
         }
 }
 
-void
+        void
 setupsignals()
 {
         struct sigaction sa;
@@ -127,7 +128,7 @@ setupsignals()
                         sigaction(SIGRTMIN + block->signal, &sa, NULL);
 }
 
-void
+        void
 sighandler(int sig, siginfo_t *info, void *ucontext)
 {
         sig -= SIGRTMIN;
@@ -137,7 +138,7 @@ sighandler(int sig, siginfo_t *info, void *ucontext)
         setroot();
 }
 
-void
+        void
 statusloop()
 {
         int i;
@@ -166,7 +167,7 @@ statusloop()
         }
 }
 
-void
+        void
 termhandler(int sig)
 {
         cleanup();
@@ -174,7 +175,7 @@ termhandler(int sig)
 }
 
 /* returns whether block outputs have changed and updates statustext if they have */
-int
+        int
 updatestatus()
 {
         char *s = statustext;
@@ -242,8 +243,7 @@ update1:
                         d = delim;
                         while (*d != '\0')
                                 *(s++) = *(d++);
-                        *(s++) = '\n'; /* to mark the end of delimiter */
-                /* skip over empty blocks */
+                        /* skip over empty blocks */
                 } else {
                         *block->prvtext = *block->curtext;
                         continue;
@@ -263,7 +263,7 @@ update2:
         return 1;
 }
 
-void
+        void
 writepid()
 {
         int fd;
@@ -296,7 +296,7 @@ writepid()
         }
 }
 
-int
+        int
 main(int argc, char *argv[])
 {
         pid = getpid();
