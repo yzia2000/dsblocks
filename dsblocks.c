@@ -73,7 +73,6 @@ setroot()
         if (updatestatus()) {
                 XStoreName(dpy, DefaultRootWindow(dpy), statustext);
                 XSync(dpy, False);
-                printf("%s", statustext);
         }
 }
 

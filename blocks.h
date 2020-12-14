@@ -24,11 +24,11 @@ static Block blocks[] = {
 
         { volumeu,                      volumec,                0,              2 },
 
-        { batteryu,                     NULL,                   0,              5 },
-
         { ramu,                         cpuc,                   1,              6 },
 
         { cpuu,                         cpuc,                   1,              3 },
+
+        { batteryu,                     NULL,                   10,             5 },
 
         { calendaru,                    NULL,                   1,              1 },
 
